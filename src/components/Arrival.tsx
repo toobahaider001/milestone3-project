@@ -1,28 +1,56 @@
+'use client'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-interface ArrivalProps{
-    ImageUrl:string,
-    title:string,
-    price:string,
-    id:number
+import { useCartStore } from './context/cartStore'
+
+interface ArrivalProps {
+  ImageUrl: string,
+  title: string,
+  price: string,
+  id: string
 }
-const Arrival:React.FC<ArrivalProps> = ({
-    ImageUrl,
-    title,
-    price,
-    id
+
+const Arrival: React.FC<ArrivalProps> = ({
+  ImageUrl,
+  title,
+  price,
+  id
 }) => {
+  const addToCart = useCartStore((state) => state.addToCart);
+
+  const handleAddToCart = async () => {
+    try {
+      await addToCart(id);
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+    }
+  };
+
   return (
-  <Link href={`/${id}`}>
-    <div className='flex flex-col bg-zinc-200 p-3 items-center w-[250px] rounded-2xl'>
-        <Image src={ImageUrl} alt='' height={200} width={200} />
-        <div className='text-[15px] font-semibold mt-4'>{title}</div>
-        <div className='text-zinc-500'>{price}</div>
-
+    <div className="flex flex-col items-center justify-between p-4 bg-white rounded-xl shadow-md transition-transform transform hover:scale-105 hover:shadow-lg w-full sm:w-[300px]">
+      <Link href={`/${id}`} className="w-full">
+        <div className="flex flex-col items-center">
+          <Image
+            src={ImageUrl}
+            alt={title}
+            height={200}
+            width={200}
+            className="rounded-lg"
+          />
+          <div className="text-lg font-semibold mt-3 text-center">{title}</div>
+          <div className="text-zinc-500 text-sm mt-1">{price}</div>
+        </div>
+      </Link>
+      <button
+        className="mt-4 px-6 py-2 bg-black text-white rounded-lg w-full text-center hover:bg-zinc-800 focus:ring-2 focus:ring-offset-2 focus:ring-zinc-600 transition"
+        onClick={handleAddToCart}
+      >
+        Add to Cart
+      </button>
     </div>
-  </Link>
-  )
-}
+  );
+};
 
-export default Arrival
+export default Arrival;
